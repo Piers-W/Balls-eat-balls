@@ -4,15 +4,13 @@ import PvPGame from './components/PvpGame';
 import './App.css';
 
 function App() {
-  // 使用useState钩子初始化游戏模式状态
-  const [gameMode, setGameMode] = useState(null); // 初始状态为null
+ 
+  const [gameMode, setGameMode] = useState(null); 
 
-  // 设置游戏模式的函数
   const selectGameMode = (mode) => {
     setGameMode(mode);
   };
 
-  // 渲染游戏模式选择界面的函数
   const renderGameSelection = () => (
     <div className="game-selection-container">
       <h1 className="game-title">Welcome to the Balls eat balls</h1>
@@ -28,7 +26,6 @@ function App() {
     </div>
   );
 
-  // 根据选定的游戏模式渲染相应的游戏组件
   const renderGame = () => {
     switch (gameMode) {
       case 'PvE':
@@ -40,7 +37,6 @@ function App() {
     }
   };
 
-  // 主渲染函数
   return (
     <div className="game-container">
       {!gameMode ? renderGameSelection() : renderGame()}

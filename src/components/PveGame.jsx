@@ -24,9 +24,94 @@ function PvEGame() {
   const canvasHeight = 1080;
   const gameLoopIntervalRef = useRef();
   const player1Ref = useRef();
+  const moveSpeed = 2;
+  const animationFrameId = useRef(null);
+  
 
+  const [moving, setMoving] = useState({ left: false, right: false, up: false, down: false });
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      switch (event.keyCode) {
+        case 65: // A key
+          setMoving(m => ({ ...m, left: true }));
+          break;
+        case 68: // D key
+          setMoving(m => ({ ...m, right: true }));
+          break;
+        case 87: // W key
+          setMoving(m => ({ ...m, up: true }));
+          break;
+        case 83: // S key
+          setMoving(m => ({ ...m, down: true }));
+          break;
+        default:
+          break;
+      }
+    };
+  
+    const handleKeyUp = (event) => {
+      switch (event.keyCode) {
+        case 65: // A key
+          setMoving(m => ({ ...m, left: false }));
+          break;
+        case 68: // D key
+          setMoving(m => ({ ...m, right: false }));
+          break;
+        case 87: // W key
+          setMoving(m => ({ ...m, up: false }));
+          break;
+        case 83: // S key
+          setMoving(m => ({ ...m, down: false }));
+          break;
+        default:
+          break;
+      }
+    };
+
+    const preventWindowScroll = (event) => {
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
+        event.preventDefault();
+      }
+    };
+  
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('keyup', handleKeyUp);
+    window.addEventListener('keydown', preventWindowScroll);
+  
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('keyup', handleKeyUp);
+      window.removeEventListener('keydown', preventWindowScroll);
+      if (animationFrameId.current) {
+        cancelAnimationFrame(animationFrameId.current);
+      }
+    };
+  }, []);
+  
+  useEffect(() => {
+    const updatePlayerPosition = () => {
+      let newX = Math.max(playerSize / 2, Math.min(canvasWidth - playerSize / 2, playerPosition.x + (moving.right - moving.left) * 2));
+      let newY = Math.max(playerSize / 2, Math.min(canvasHeight - playerSize / 2, playerPosition.y + (moving.down - moving.up) * 2));
+      
+      const newPosition = { x: newX, y: newY };
+      setPlayerPosition(newPosition);
+      handlePlayerPosition(newPosition)
+      animationFrameId.current = requestAnimationFrame(updatePlayerPosition);
+    };
+
+    animationFrameId.current = requestAnimationFrame(updatePlayerPosition);
+
+    return () => {
+      if (animationFrameId.current) {
+        cancelAnimationFrame(animationFrameId.current);
+      }
+    };
+  }, [moving, playerPosition, moveSpeed, playerSize, canvasWidth, canvasHeight]);
+
+  
   const updateMonsterPosition = () => {
-    const speed = 2; 
+    const speed = 1; 
     const dx = playerPositionRef.current.x - monsterPositionRef.current.x;
     const dy = playerPositionRef.current.y - monsterPositionRef.current.y;
     const angle = Math.atan2(dy, dx);
@@ -36,19 +121,18 @@ function PvEGame() {
 
     const newPosition = { x: newX, y: newY };
     setMonsterPosition(newPosition); 
-    handleMonsterPositionChange(newPosition);
+    handleMonsterPosition(newPosition);
   };
+
+  useEffect(() => {
+    updateMonsterPosition();
+  }, [playerPosition]); 
 
     useEffect(() => {
       generateInitialFoods();
       startGameLoop();
       updateViewportOffset(playerPosition);
       setMonsterPosition(generateRandomPosition()); 
-  
-      playerPositionRef.current = playerPosition;
-      playerSizeRef.current = playerSize;
-      monsterPositionRef.current = monsterPosition;
-      monsterSizeRef.current = monsterSize;
   
       return () => {
         clearInterval(gameLoopIntervalRef.current);
@@ -69,7 +153,6 @@ function PvEGame() {
     return { x, y };
   }
 
-
   function generateInitialFoods() {
     const newFoods = [];
     const newPoisons = [];
@@ -83,16 +166,16 @@ function PvEGame() {
     setPoisons(newPoisons);
   }
 
+
   function startGameLoop() {
     gameLoopIntervalRef.current = setInterval(() => {
-      
       checkCollisionWithMonster();
       updateMonsterPosition();
     }, 1000 / 60);
     
   }
 
-  function updatePlayerPosition(newPosition) {
+  function handlePlayerPosition(newPosition) {
     // Collision handling and position updates for player
     handleFoodCollision(newPosition, 'player');
     handlePoisonCollision(newPosition, 'player');
@@ -101,7 +184,7 @@ function PvEGame() {
     
   }
 
-  function handleMonsterPositionChange(newPosition) {
+  function handleMonsterPosition(newPosition) {
     // Collision handling and position updates for monster
     handleFoodCollision(newPosition, 'monster');
     handlePoisonCollision(newPosition, 'monster');
@@ -109,18 +192,35 @@ function PvEGame() {
     
   }
 
+  function updateViewportOffset(playerPosition) {
+    const viewportWidth = 1280;
+    const viewportHeight = 720;
+    let offsetX = -playerPosition.x + viewportWidth / 2;
+    let offsetY = -playerPosition.y + viewportHeight / 2;
+  
+    offsetX = Math.min(0, offsetX);
+    offsetY = Math.min(0, offsetY);
+    offsetX = Math.max(viewportWidth - canvasWidth, offsetX);
+    offsetY = Math.max(viewportHeight - canvasHeight, offsetY);
+  
+    setViewportOffset({ x: offsetX, y: offsetY });
+  }
+
 // Handles collision with food for both player and monster
 function handleFoodCollision(newPosition, collider) {
+  
   let colliderSize = collider === 'player' ? playerSize : monsterSize;
   let sizeUpdater = collider === 'player' ? setPlayerSize : setMonsterSize;
+  
   
 
   const newFoods = foods.filter(food => {
     const dx = newPosition.x - food.x;
     const dy = newPosition.y - food.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
-    
 
+    
+    
     return distance >= colliderSize / 2 + 10; 
   });
 
@@ -142,8 +242,9 @@ function handlePoisonCollision(newPosition, collider) {
     const dx = newPosition.x - poison.x;
     const dy = newPosition.y - poison.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
-    
 
+    
+    
     return distance >= colliderSize / 2 + 10; // Only keep the poisons that did not collide
   });
 
@@ -177,31 +278,16 @@ function checkCollisionWithMonster() {
     if (window.confirm(message)) {
       resetGame();
     } else {
-      window.location.reload(); // This will reload the page, effectively resetting the state
+      window.location.reload(); 
     }
   }
 }
 
-// Collision handling functions...
-
-function updateViewportOffset(playerPosition) {
-  const viewportWidth = 1280;
-  const viewportHeight = 720;
-  let offsetX = -playerPosition.x + viewportWidth / 2;
-  let offsetY = -playerPosition.y + viewportHeight / 2;
-
-  offsetX = Math.min(0, offsetX);
-  offsetY = Math.min(0, offsetY);
-  offsetX = Math.max(viewportWidth - canvasWidth, offsetX);
-  offsetY = Math.max(viewportHeight - canvasHeight, offsetY);
-
-  setViewportOffset({ x: offsetX, y: offsetY });
-}
-
-
 const resetGame = () => {
-  console.log("Resetting game...");
   clearInterval(gameLoopIntervalRef.current);
+  if (animationFrameId.current) {
+    cancelAnimationFrame(animationFrameId.current);
+}
   
   setFoods([]);
   setPoisons([]);
@@ -210,11 +296,9 @@ const resetGame = () => {
   setMonsterPosition(generateRandomPosition());
   setMonsterSize(200);
   setIsGameOver(false);
+  monsterPositionRef.current = generateRandomPosition();
 
-  if (player1Ref.current) {
-    player1Ref.current.resetMovement();
-    player1Ref.current.resetPosition();
-  }
+  setMoving({ left: false, right: false, up: false, down: false });
 
   startGameLoop();
   generateInitialFoods();
@@ -246,27 +330,14 @@ const resetGame = () => {
           <Poison key={index} position={poison} size={10} />
         ))}
         <Player
-          ref={player1Ref} 
           position={playerPosition}
           size={playerSize}
           color="blue"
-          controlKeys={{
-            65: 'left', // A key
-            68: 'right', // D key
-            87: 'up', // W key
-            83: 'down', // S key
-          }}
-          updatePosition={updatePlayerPosition}
-          canvasWidth={canvasWidth}
-          canvasHeight={canvasHeight}
         />
         <Monster
           position={monsterPosition}
-          playerPosition={playerPosition}
           size={monsterSize}
-          onPositionChange={handleMonsterPositionChange}
         />
-      
       </div>
     </div>
   );

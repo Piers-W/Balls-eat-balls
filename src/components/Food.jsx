@@ -1,6 +1,5 @@
 import React from 'react';
 
-// 使用箭头函数定义函数组件
 const Food = ({ position }) => {
   return (
     <div
