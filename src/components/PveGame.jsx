@@ -175,7 +175,9 @@ function PvEGame() {
   };
 
   useEffect(() => {
+    if (difficulty){
     updateMonsterPosition();
+    }
   }, [playerPosition]);
 
   useEffect(() => {
