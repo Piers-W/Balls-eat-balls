@@ -73,3 +73,82 @@ ul.game-rules li {
   margin-bottom: 10px;
 }
 
+.scoreboard-container {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.scoreboard-container h2 {
+  margin: 0 0 10px 0;
+  color: #333;
+  text-align: center;
+}
+
+.scoreboard-container ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.scoreboard-container ul li {
+  padding: 5px 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.scoreboard-container ul li:last-child {
+  border-bottom: none;
+}
+
+.scoreboard-container button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.scoreboard-container button:hover {
+  background-color: #0056b3;
+}
+
+.reset-scores-button {
+  background-color: #dc3545; 
+}
+
+.reset-scores-button:hover {
+  background-color: #c82333; 
+}
+
+.description-text {
+  margin-top: 15px;
+  margin-bottom: 25px;
+  font-size: 16px;
+  line-height: 1.5;
+  max-width: 40%; 
+  margin-left: auto; 
+  margin-right: auto;
+  word-wrap: break-word; 
+}
+
+.inputField {
+  display: block;
+  margin: 10px auto;
+  padding: 10px;
+  font-size: 16px;
+  width: 80%;
+}
+
+
+
+
+
+
