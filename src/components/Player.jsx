@@ -17,7 +17,7 @@ const Player = React.forwardRef(({ position, size = 10, color }, ref) => {
       userSelect: 'none', 
   };
 
-  return <div style={style}>{Math.floor(size)}</div>;
+  return <div style={style} className="player">{Math.floor(size)}</div>;
 });
 
 export default Player;

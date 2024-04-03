@@ -17,7 +17,7 @@ const Monster = ({ position, size }) => {
     userSelect: 'none',
   };
 
-  return <div style={monsterStyle}>{Math.floor(size)}</div>;
+  return <div style={monsterStyle} className="monster">{Math.floor(size)}</div>;
 };
 
 export default Monster;

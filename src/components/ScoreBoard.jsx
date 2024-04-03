@@ -15,7 +15,7 @@ function ScoreBoard({ player1Score, player2Score, player1Label, player2Label }) 
       borderRadius: '5px',
       boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
     }}>
-      <h3 style={{ margin: 0 }}>{player1Label} {player1Score} - {player2Score} {player2Label}</h3>
+      <h3 style={{ margin: 0 }} className="scoreBoard">{player1Label} {player1Score} - {player2Score} {player2Label}</h3>
     </div>
   );
 }
