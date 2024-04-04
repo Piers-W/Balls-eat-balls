@@ -21,9 +21,7 @@ npm run dev
 ```plaintext
 npx cypress open
 ```
-select e2e testing
-select electron
-click balls.cy.js
+select e2e testing then select electron. click balls.cy.js
 
 ## Demo video
 [link](https://youtu.be/HNMiohADZ_A)
