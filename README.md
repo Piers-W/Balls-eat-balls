@@ -3,12 +3,9 @@
 ## Author: Zhi Wang
 
 ## Term: Spring 2024
-### How to use
-You can direcly view the page by [Firebase deploy](https://balls-eat-balls-6c000.web.app)
 
 ### clone thisrepository
-Make sure you have installed [Node.js](https://nodejs.org/en).
-
+The testing code is on the testing branch.
 Then install packages:
 
 ```plaintext
@@ -21,38 +18,51 @@ To run the application locally:
 npm run dev
 ```
 
+```plaintext
+npx cypress open
+```
+select e2e testing
+select electron
+click balls.cy.js
+
 ## Demo video
-[link](https://youtu.be/4HBJIFm5MkQ)
+[link](https://youtu.be/HNMiohADZ_A)
 
-## Introduction
+### Game Mode Selection
+PvE Mode Selection
+Objective: To verify that selecting the PvE mode navigates to the difficulty selection screen.
+Procedure: The test clicks on the "Play PvE" button and checks if the "Select Difficulty" header exists on the screen that follows.
 
-"Balls Eat Balls" is a web-based mini-game developed using React. Use Firebase to store player game scores. Its basic rules involve players controlling a small ball to eat food and grow larger, ultimately aiming to devour larger opponent balls to achieve victory.
+PvP Mode Selection
+Objective: To verify that selecting the PvP mode displays the interface for entering player names and room numbers.
+Procedure: The test clicks on the "Play PvP" button and checks for the presence of the "Enter Player Names and Room Number" header.
 
-## Gameplay
+### PvE Difficulty Selection
+Easy Mode
+Objective: To check if selecting "Easy" sets the monster's size within a specific range.
+Procedure: The test selects "Easy" and verifies the monster's size is between 90 and 105.
+Medium Mode
+Objective: To verify that "Medium" difficulty adjusts the monster's size appropriately.
+Procedure: After selecting "Medium," the test ensures the monster's size is between 135 and 155.
+Hard Mode
+Objective: To ensure "Hard" mode sets the correct size for the monster.
+Procedure: On choosing "Hard," the test checks if the monster's size falls between 180 and 205.
 
-In PvE mode, you control the blue ball using WASD, avoiding monsters (red balls), eating green balls (food) to increase your size. Avoid the poison(black balls), they shrink you by 10%. Ultimately, grow bigger than the monsters to eat them or achieve victory; being eaten by a monster results in failure. After the game ends, you can choose to play again or return to the game mode selection screen.
-In PvP mode, the basic rules are the same as in PvE mode. Player 1 controls the red ball with WASD, and Player 2 controls the blue ball with arrow keys. Eating the opponent player leads to victory
+### Player Movement
+Objective: To test that the player can be moved upwards using the "W" key.
+Procedure: After starting a game in PvE "Easy" mode, the test simulates pressing the "W" key and verifies the player moves up by comparing the initial and subsequent top positions.
 
-## Main Features
+### Scoreboard Update on Player-Monster Collision
+Objective: To confirm that the scoreboard correctly updates after a player-monster collision.
+Procedure: This test waits for a collision to occur in PvE "Easy" mode and checks if the monster's score increases post-collision.
 
-### component
-Translate all class components into functional components. Keep only basic functionality for all components except for PvP and PvE. Migrate other functionalities to the main control component.
+### PvP Room and Player Name Entry
+Objective: To validate that entering player names and a room number updates the scoreboard correctly in PvP mode.
+Procedure: The test enters "Alice" and "Bob" as player names and "123" as the room number, starts the game, and verifies that the scoreboard displays the entered names.
 
-#### PveGame
-Add difficulty selection functionality, record scores for different difficulty levels to Firebase, and include a feature to clear all difficulty scores.
+### Game Over and Return to Main Page
+Objective: To ensure the game returns to the main page when a player chooses not to play again after game over in PvE mode.
+Procedure: After triggering a game over in PvE "Easy" mode, the test simulates choosing "Cancel" on the confirmation prompt and checks for the presence of the "Welcome to Balls Eat Balls" title on the main page.
 
-#### PvpGame
- Players can input their name and room number to record their scores to the database, with scores recorded according to different room numbers. If no input is provided, it defaults to local mode, without uploading the score. At the end of the game, players can choose "OK" to upload their score or click "Cancel" to discard the score for that round.
-
-### Main Page
-#### App.jsx
-Add leaderboard functionality to record the scores of the latest 5 games.
-
-## Technologies
-React, Vite, Html, CSS, firebase
-
-## License
-
-This project is licensed under the [MIT License](https://github.com/Piers-W/Balls-eat-balls_function/blob/main/LICENSE).
 
 
